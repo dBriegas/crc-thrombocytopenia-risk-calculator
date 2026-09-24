@@ -10,6 +10,6 @@ Candidate generated: v1.4 (2026-09-24)
 - [x] Static Shinylive site exported locally.
 - [x] Script 26C cross-tool and browser checks passed.
 - [x] Public GitHub repository re-audited immediately before publication.
-- [ ] GitHub Pages deployment verified from the final commit.
+- [x] GitHub Pages deployment and eight live synthetic cases verified.
 - [x] Final release ZIP and SHA-256 generated.
 - [ ] Citation metadata, authorship and licence confirmed.

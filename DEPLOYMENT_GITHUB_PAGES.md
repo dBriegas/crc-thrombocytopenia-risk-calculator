@@ -20,3 +20,6 @@ Shinylive example. Before export it creates a temporary runtime directory from
 the exact four-file allowlist certified by Script 25C. Documentation and build
 files therefore never enter the browser's virtual filesystem. The deployed
 application remains static: visitors do not connect to a remote R process.
+
+Public deployment:
+https://dbriegas.github.io/crc-thrombocytopenia-risk-calculator/
