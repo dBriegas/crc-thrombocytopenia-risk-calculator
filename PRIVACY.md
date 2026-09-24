@@ -1,30 +1,30 @@
 # Privacy notice
 
-## Data included in the application
+## Data included in the website
 
-The application bundle contains a parameter-only model artefact and synthetic
-self-test cases. It contains no patient-level observations, direct identifiers,
-clinical record numbers, treatment-line identifiers or fitted model object.
+The website contains a parameter-only model artefact and synthetic self-test
+cases. It contains no patient-level observations, direct identifiers, clinical
+record numbers, treatment-line identifiers, observed clinical cases or fitted
+model object.
 
-## Values entered by users
+## Values entered by visitors
 
-Values entered into the calculator are transmitted from the user's browser to
-the server hosting the Shiny session so that the prediction can be calculated.
-They are held in the active session memory. The application code does not write
-these values to files or databases and does not intentionally log or retain
-them after the session ends.
+In the GitHub Pages edition, the application runs locally in the visitor's
+browser through Shinylive/webR. Values entered into the calculator are not sent
+to a remote R server by the application code and are not written to a database
+or retained after the browser session ends.
 
-Users should not enter names, record numbers or any other directly identifying
-information. None is required by the calculator.
+No names, clinical record numbers or other identifiers are requested. Visitors
+should not enter such information.
 
-## Hosting
+## Static hosting
 
-The hosting provider may process technical access information under its own
-privacy, security and retention policies. The definitive public release will
-identify the selected hosting provider and link to the applicable policy.
+GitHub may process ordinary website access and technical metadata under its own
+privacy and security policies. This is distinct from the clinical input values,
+which remain inside the browser under the application architecture described
+above.
 
 ## Scope
 
-This notice describes the behaviour of the application code. It is not a claim
-that the hosting infrastructure is suitable for storing identifiable health
-information.
+This notice describes the behaviour of the published application code. The site
+is not intended to collect or store identifiable health information.

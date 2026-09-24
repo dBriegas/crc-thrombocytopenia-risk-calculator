@@ -1,0 +1,97 @@
+# Static browser deployment with Shinylive/webR.
+# Enable only after Script 26C and the final confidentiality audit pass.
+name: Deploy Shinylive app to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out certified source
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install pinned Shinylive build tools
+        shell: Rscript {0}
+        run: |
+          install.packages("remotes")
+          remotes::install_version(
+            "shinylive",
+            version = "0.5.0",
+            dependencies = TRUE,
+            upgrade = "never"
+          )
+          install.packages(c("digest", "jsonlite", "shiny", "bslib", "ggplot2"))
+
+      - name: Stage the exact four-file runtime allowlist
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _runtime/R _runtime/data _runtime/www
+          cp app.R _runtime/app.R
+          cp R/model_engine.R _runtime/R/model_engine.R
+          cp data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds _runtime/data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds
+          cp www/styles.css _runtime/www/styles.css
+
+      - name: Verify certified hashes and export
+        shell: Rscript {0}
+        run: |
+          sha256 <- function(path) digest::digest(path, algo = "sha256", file = TRUE, serialize = FALSE)
+          stopifnot(
+            sha256("_runtime/app.R") == "5b9f2fbf6d74e036a94ce8eee694d308e150f9eaae1484099572d986a360533d",
+            sha256("_runtime/R/model_engine.R") == "093060ddebcd0d9d1744d4846e438494a61c47a8660d6e282dfd72628c02d324",
+            sha256("_runtime/data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds") == "9dd12aa1a52213f7817bee1e33f20d44bdb19dc834c836d7c57ae30647ac7350",
+            sha256("_runtime/www/styles.css") == "7cabcd1385a261ea100dd6a9b7258aa1f50beb1b6326ba0f90f2984f19afe118"
+          )
+          shinylive::export(
+            "_runtime",
+            "site",
+            wasm_packages = TRUE,
+            package_cache = TRUE,
+            max_filesize = "95M",
+            template_params = list(title = "Chemotherapy-induced thrombocytopenia risk")
+          )
+          payload <- jsonlite::fromJSON("site/app.json", simplifyVector = FALSE)
+          stopifnot(
+            length(payload) == 4L,
+            identical(
+              vapply(payload, function(x) x$name, character(1)),
+              c("app.R", "R/model_engine.R", "data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds", "www/styles.css")
+            )
+          )
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

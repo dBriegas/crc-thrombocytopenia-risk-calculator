@@ -1,21 +1,15 @@
 # Publication checklist
 
-- [x] Publication candidate created from the public-only DEV application.
-- [x] Public engine hash matches the certified engine.
-- [x] Public parametric artefact hash matches the certified artefact.
-- [x] Visual assets isolated under `www/`.
-- [x] Deployment restricted to an explicit file allowlist.
-- [x] Local files, credentials, logs and serialized objects denied by default.
-- [x] Privacy and security statements added.
-- [x] Repository owner and private repository name confirmed.
-- [ ] Definitive author list, affiliations and ORCID identifiers confirmed.
-- [ ] Software licence selected.
-- [x] Private GitHub repository created.
-- [ ] Hosting account configured.
-- [ ] Private staging deployment completed.
-- [ ] Remote functional and responsive checks completed.
-- [ ] Final public-package script completed.
-- [ ] Cross-tool numerical certification repeated.
-- [ ] Final release SHA-256 recorded.
-- [ ] Public visibility decision completed.
-- [ ] Stable public URL and archival DOI recorded, if applicable.
+Candidate generated: v1.4 (2026-09-24)
+
+- [x] Public parameter-only artefact used.
+- [x] Certified engine and artefact SHA-256 signatures verified.
+- [x] No fitted model object included.
+- [x] No individual or observed clinical cases included.
+- [x] No credentials or shinyapps.io deployment material included.
+- [x] Static Shinylive site exported locally.
+- [x] Script 26C cross-tool and browser checks passed.
+- [x] Public GitHub repository re-audited immediately before publication.
+- [ ] GitHub Pages deployment verified from the final commit.
+- [x] Final release ZIP and SHA-256 generated.
+- [ ] Citation metadata, authorship and licence confirmed.

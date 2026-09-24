@@ -1,29 +1,32 @@
 # Security and disclosure policy
 
-## Intended contents
+## Permitted repository contents
 
-Only the public application source, static styles, parameter-only model
-artefact and synthetic self-test cases may be included in this repository or
-deployment bundle.
+Only public application source, static styles, the parameter-only model artefact,
+synthetic self-test cases and publication documentation may be committed.
 
 The following are prohibited:
 
-- patient-level or line-level tables;
+- patient-level or treatment-line-level tables;
 - direct or indirect patient identifiers;
 - observed clinical cases;
 - fitted model objects;
 - credentials, deployment tokens or private keys;
-- local logs or R session history.
+- local logs, R history or environment files.
 
 ## Deployment controls
 
-The deployment script uses an explicit file allowlist and verifies the
-certified SHA-256 hashes of the model engine and public artefact before upload.
-Credentials must be configured through the hosting platform or an appropriate
-credential store and must never be committed to the repository.
+The source candidate is built from an explicit allowlist. The model engine and
+public artefact are checked against certified SHA-256 signatures. Deployment is
+performed by GitHub Actions using the repository token supplied automatically by
+GitHub; no personal token is stored in the repository.
+
+The prediction engine runs in the browser. The application code contains no
+analytics, cookies, external database connection or facility for persisting
+submitted values.
 
 ## Reporting
 
 Until a public contact channel is established, security or confidentiality
-concerns should be reported directly to the study team through its existing
-institutional communication channels. Do not include patient data in a report.
+concerns should be reported to the study team through existing institutional
+channels. Do not include patient data in a report.

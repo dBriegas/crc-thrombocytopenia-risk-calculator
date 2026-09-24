@@ -1,6 +1,6 @@
 ###############################################################################
 # app.R
-# Model A Public Shiny Clinical Calculator v1.3
+# Model A Public Shinylive Clinical Calculator v1.4
 ###############################################################################
 
 options(stringsAsFactors = FALSE)
@@ -15,7 +15,7 @@ if (length(missing_packages) > 0L) {
     paste0(
       "Missing required packages: ",
       paste(missing_packages, collapse = ", "),
-      ". Run 00_install_packages.R first."
+      ". Install the packages listed in README.md first."
     ),
     call. = FALSE
   )
@@ -334,8 +334,9 @@ ui <- shiny::fluidPage(
                 "This model provides <strong>informational predictive ",
                 "support</strong>. It does not prescribe treatment, replace ",
                 "laboratory monitoring or professional judgement, or establish ",
-                "causal differences between regimens. Entered values are not ",
-                "written to a file or retained by the application."
+                "causal differences between regimens. In the published GitHub ",
+                "Pages edition, entered values are processed locally in the browser, ",
+                "are not sent to a remote R server, and are not retained by the application."
               )
             )
           )
