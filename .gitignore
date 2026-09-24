@@ -1,0 +1,30 @@
+.DS_Store
+.RData
+.Rhistory
+.Rproj.user/
+.Renviron
+*.Rproj
+*.log
+rsconnect/
+renv/library/
+renv/staging/
+
+# Deny serialized R objects by default. The only permitted RDS is the
+# certified, parameter-only public artefact below.
+*.rds
+!data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds
+
+# Never admit common research-data and internal-model locations.
+raw/
+raw_data/
+clinical_data/
+patient_data/
+internal/
+private/
+results/
+resultados/
+*.dta
+*.sav
+*.sas7bdat
+*.parquet
+*.feather

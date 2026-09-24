@@ -1,0 +1,21 @@
+# Publication checklist
+
+- [x] Publication candidate created from the public-only DEV application.
+- [x] Public engine hash matches the certified engine.
+- [x] Public parametric artefact hash matches the certified artefact.
+- [x] Visual assets isolated under `www/`.
+- [x] Deployment restricted to an explicit file allowlist.
+- [x] Local files, credentials, logs and serialized objects denied by default.
+- [x] Privacy and security statements added.
+- [x] Repository owner and private repository name confirmed.
+- [ ] Definitive author list, affiliations and ORCID identifiers confirmed.
+- [ ] Software licence selected.
+- [x] Private GitHub repository created.
+- [ ] Hosting account configured.
+- [ ] Private staging deployment completed.
+- [ ] Remote functional and responsive checks completed.
+- [ ] Final public-package script completed.
+- [ ] Cross-tool numerical certification repeated.
+- [ ] Final release SHA-256 recorded.
+- [ ] Public visibility decision completed.
+- [ ] Stable public URL and archival DOI recorded, if applicable.

@@ -1,0 +1,416 @@
+/* ============================================================
+   THROMBOCYTOPENIA APP - COLOR SYSTEM
+   Base palette: Sarah Renae Clark - Natural Wonder #117
+
+   500 = original palette color
+   50-400 = tints
+   600-950 = shades
+   ============================================================ */
+
+:root {
+  /* IVORY - Main application background / warm neutral */
+  --ivory-50: #FFFFFE;
+  --ivory-100: #FFFFFD;
+  --ivory-200: #FFFFFB;
+  --ivory-300: #FFFFF9;
+  --ivory-400: #FFFEF8;
+  --ivory-500: #FFFEF6;
+  --ivory-600: #D9D8D1;
+  --ivory-700: #B3B2AC;
+  --ivory-800: #8C8B87;
+  --ivory-900: #666662;
+  --ivory-950: #40403E;
+
+  /* VANILLA - Intermediate support / caution */
+  --vanilla-50: #FEFCF5;
+  --vanilla-100: #FDF9E8;
+  --vanilla-200: #FCF3D6;
+  --vanilla-300: #FAECC3;
+  --vanilla-400: #F9E8B2;
+  --vanilla-500: #F7E3A0;
+  --vanilla-600: #D2C188;
+  --vanilla-700: #AD9F70;
+  --vanilla-800: #887D58;
+  --vanilla-900: #635B40;
+  --vanilla-950: #3E3928;
+
+  /* MELLOW APRICOT - Secondary highlight / gentle warning / charts */
+  --apricot-50: #FFF9F1;
+  --apricot-100: #FFF2E3;
+  --apricot-200: #FEE5CA;
+  --apricot-300: #FDD8B1;
+  --apricot-400: #FDCB92;
+  --apricot-500: #FCBC72;
+  --apricot-600: #D6A061;
+  --apricot-700: #B08450;
+  --apricot-800: #8B673F;
+  --apricot-900: #654B2E;
+  --apricot-950: #3F2F1D;
+
+  /* CARROT ORANGE - Primary accent / CTA / active UI elements */
+  --carrot-50: #FBF5EC;
+  --carrot-100: #F7E9D8;
+  --carrot-200: #EFD3B1;
+  --carrot-300: #E7BC89;
+  --carrot-400: #DFA562;
+  --carrot-500: #D78F3B;
+  --carrot-600: #B77932;
+  --carrot-700: #976429;
+  --carrot-800: #764E20;
+  --carrot-900: #563918;
+  --carrot-950: #36240F;
+
+  /* BRASS - Low-risk / reassuring state */
+  --brass-50: #F8F6ED;
+  --brass-100: #F0EDDB;
+  --brass-200: #E1DBB7;
+  --brass-300: #D3C992;
+  --brass-400: #C2B66D;
+  --brass-500: #B2A44A;
+  --brass-600: #978B3F;
+  --brass-700: #7D7334;
+  --brass-800: #625A29;
+  --brass-900: #47421E;
+  --brass-950: #2D2913;
+
+  /* CLINICAL RED - Important alerts only */
+  --clinical-red-50: #F9EEEE;
+  --clinical-red-100: #F2DCDA;
+  --clinical-red-200: #E5BAB6;
+  --clinical-red-300: #D89791;
+  --clinical-red-400: #C87369;
+  --clinical-red-500: #B94F45;
+  --clinical-red-600: #9D433B;
+  --clinical-red-700: #823730;
+  --clinical-red-800: #662C26;
+  --clinical-red-900: #4A201C;
+  --clinical-red-950: #2E1411;
+
+  /* Semantic aliases. These do not create clinical risk categories. */
+  --app-background: var(--ivory-500);
+  --app-surface: var(--ivory-50);
+  --app-text: var(--ivory-950);
+  --app-text-muted: var(--ivory-900);
+  --app-border: var(--ivory-600);
+  --app-accent: var(--carrot-500);
+  --app-reassuring: var(--brass-500);
+  --app-caution: var(--vanilla-500);
+  --app-warning: var(--apricot-500);
+  --app-critical: var(--clinical-red-500);
+}
+
+html {
+  background: var(--app-background);
+}
+
+body {
+  background:
+    radial-gradient(circle at 92% 3%, rgba(247, 227, 160, 0.22), transparent 27rem),
+    var(--app-background);
+  color: var(--app-text);
+  font-family: Inter, Aptos, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--vanilla-500);
+  color: var(--vanilla-950);
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 52px;
+}
+
+.hero,
+.panel-card {
+  background: rgba(255, 255, 254, 0.96);
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  box-shadow: 0 10px 34px rgba(64, 64, 62, 0.07);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 30px;
+  margin-bottom: 22px;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--carrot-500);
+}
+
+.hero-kicker,
+.panel-title,
+.risk-label {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.hero-kicker {
+  color: var(--carrot-700);
+}
+
+.hero h1 {
+  color: var(--ivory-950);
+  margin: 6px 0 8px;
+  font-size: clamp(27px, 3vw, 34px);
+  font-weight: 760;
+  line-height: 1.16;
+}
+
+.hero p {
+  max-width: 850px;
+  margin: 0;
+  color: var(--app-text-muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.model-badge {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 6px 11px;
+  border: 1px solid var(--brass-500);
+  border-radius: 999px;
+  background: var(--brass-50);
+  color: var(--brass-900);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.panel-card {
+  padding: 23px;
+  margin-bottom: 20px;
+}
+
+.panel-title {
+  color: var(--carrot-800);
+  margin-bottom: 17px;
+}
+
+.control-label,
+.form-label {
+  color: var(--ivory-950);
+  font-weight: 650;
+}
+
+.form-control,
+.selectize-input {
+  min-height: 42px;
+  border: 1px solid var(--ivory-700);
+  border-radius: 10px;
+  background: var(--ivory-50);
+  color: var(--ivory-950);
+  box-shadow: none;
+}
+
+.form-control:focus,
+.selectize-input.focus {
+  border-color: var(--carrot-500);
+  box-shadow: 0 0 0 0.2rem rgba(215, 143, 59, 0.18);
+}
+
+.selectize-dropdown {
+  border-color: var(--ivory-700);
+  background: var(--ivory-50);
+}
+
+.selectize-dropdown .active {
+  background: var(--carrot-50);
+  color: var(--carrot-950);
+}
+
+.btn-primary {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+  border: 1px solid var(--carrot-700);
+  border-radius: 10px;
+  background: var(--carrot-700);
+  color: var(--ivory-50);
+  font-weight: 700;
+  box-shadow: 0 5px 13px rgba(118, 78, 32, 0.16);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  border-color: var(--carrot-800) !important;
+  background: var(--carrot-800) !important;
+  color: var(--ivory-50) !important;
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid var(--carrot-300);
+  outline-offset: 2px;
+}
+
+.small-note,
+.footer-note {
+  color: var(--app-text-muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.small-note {
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.risk-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 205px;
+  padding: 27px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 17px;
+  background: var(--ivory-950);
+  color: var(--ivory-50);
+}
+
+.risk-card::after {
+  content: "";
+  position: absolute;
+  right: -45px;
+  bottom: -70px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(215, 143, 59, 0.16);
+}
+
+.risk-label {
+  color: var(--vanilla-500);
+}
+
+.risk-value {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0;
+  font-size: clamp(48px, 6vw, 60px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.risk-interval {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 8px;
+  color: var(--ivory-300);
+  font-size: 14px;
+}
+
+.risk-caption {
+  position: relative;
+  z-index: 1;
+  color: var(--ivory-600);
+  font-size: 13px;
+}
+
+.support-box {
+  border-radius: 13px;
+  padding: 15px 17px;
+  margin-top: 13px;
+  line-height: 1.48;
+}
+
+.support-title {
+  font-weight: 750;
+  margin-bottom: 4px;
+}
+
+.support-robust {
+  border: 1px solid var(--brass-500);
+  background: var(--brass-50);
+  color: var(--brass-900);
+}
+
+.support-limited {
+  border: 1px solid var(--vanilla-600);
+  background: var(--vanilla-50);
+  color: var(--vanilla-950);
+}
+
+.support-reduced {
+  border: 1px solid var(--apricot-500);
+  background: var(--apricot-50);
+  color: var(--apricot-950);
+}
+
+.support-error {
+  border: 1px solid var(--clinical-red-500);
+  background: var(--clinical-red-50);
+  color: var(--clinical-red-900);
+}
+
+.support-neutral {
+  border: 1px solid var(--ivory-600);
+  background: var(--ivory-400);
+  color: var(--ivory-950);
+}
+
+.chart-title {
+  color: var(--ivory-950);
+  font-size: 16px;
+  font-weight: 750;
+  margin-bottom: 4px;
+}
+
+.chart-subtitle {
+  color: var(--app-text-muted);
+  font-size: 13px;
+  line-height: 1.48;
+  margin-bottom: 12px;
+}
+
+.shiny-plot-output {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@media (max-width: 767.98px) {
+  .app-shell {
+    padding: 18px 12px 36px;
+  }
+
+  .hero,
+  .panel-card {
+    border-radius: 15px;
+  }
+
+  .hero {
+    padding: 23px 20px 23px 24px;
+  }
+
+  .panel-card {
+    padding: 18px;
+  }
+
+  .risk-card {
+    min-height: 190px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
