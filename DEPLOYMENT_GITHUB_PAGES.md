@@ -1,9 +1,9 @@
 # GitHub Pages deployment
 
-The repository is deliberately kept private during development. In GitHub Free,
-the planned GitHub Pages site requires a public repository.
+Source v1.5 is published through GitHub Pages. Deployment is permitted only when
+the workflow's real Chromium button-and-result test passes.
 
-Before replacing a public release:
+Certified deployment sequence:
 
 1. Replace the repository contents with the audited v1.5 source set.
 2. Commit and push the certified files to `main`.
@@ -18,3 +18,6 @@ the exact four-file runtime allowlist certified by Script 25D. Documentation,
 the browser test and build
 files therefore never enter the browser's virtual filesystem. The deployed
 application remains static: visitors do not connect to a remote R process.
+
+Public deployment:
+https://dbriegas.github.io/crc-thrombocytopenia-risk-calculator/

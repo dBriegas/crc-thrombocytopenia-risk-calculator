@@ -9,8 +9,8 @@ Candidate generated: v1.5 (2026-09-29)
 - [x] No credentials or shinyapps.io deployment material included.
 - [x] Static Shinylive site exported locally.
 - [x] Workflow contains a real button-and-result browser test.
-- [ ] GitHub Actions functional browser check passed.
-- [ ] Public GitHub repository re-audited immediately before publication.
-- [ ] GitHub Pages deployment verified from the final commit.
+- [x] GitHub Actions functional browser check passed.
+- [x] Public GitHub repository re-audited immediately before publication.
+- [x] GitHub Pages deployment verified from the final commit.
 - [ ] Final release ZIP and SHA-256 generated.
 - [ ] Citation metadata, authorship and licence confirmed.
