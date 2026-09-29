@@ -1,5 +1,5 @@
 # Static browser deployment with Shinylive/webR.
-# Enable only after Script 26C and the final confidentiality audit pass.
+# Deployment is blocked unless the functional browser check passes.
 name: Deploy Shinylive app to GitHub Pages
 
 on:
@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Check out certified source
         uses: actions/checkout@v4
+
+      - name: Set up Node for the functional browser check
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
@@ -49,16 +54,18 @@ jobs:
           cp R/model_engine.R _runtime/R/model_engine.R
           cp data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds _runtime/data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds
           cp www/styles.css _runtime/www/styles.css
+          if [ -f www/brand-logo.svg ]; then cp www/brand-logo.svg _runtime/www/brand-logo.svg; fi
 
       - name: Verify certified hashes and export
         shell: Rscript {0}
         run: |
           sha256 <- function(path) digest::digest(path, algo = "sha256", file = TRUE, serialize = FALSE)
           stopifnot(
-            sha256("_runtime/app.R") == "5b9f2fbf6d74e036a94ce8eee694d308e150f9eaae1484099572d986a360533d",
+            sha256("_runtime/app.R") == "7082daa3a232166632fd8af9dc33413aed0fb1610eeb3856e4bd44a0f49e430d",
             sha256("_runtime/R/model_engine.R") == "093060ddebcd0d9d1744d4846e438494a61c47a8660d6e282dfd72628c02d324",
             sha256("_runtime/data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds") == "9dd12aa1a52213f7817bee1e33f20d44bdb19dc834c836d7c57ae30647ac7350",
-            sha256("_runtime/www/styles.css") == "7cabcd1385a261ea100dd6a9b7258aa1f50beb1b6326ba0f90f2984f19afe118"
+            sha256("_runtime/www/styles.css") == "bf5cd8f4d7bedbb2cba8bb99ce47dbb27d69aeca3bee149905fb6849cb4a9788",
+            !file.exists("_runtime/www/brand-logo.svg")
           )
           shinylive::export(
             "_runtime",
@@ -69,13 +76,54 @@ jobs:
             template_params = list(title = "Chemotherapy-induced thrombocytopenia risk")
           )
           payload <- jsonlite::fromJSON("site/app.json", simplifyVector = FALSE)
+          expected_names <- c(
+            "app.R", "R/model_engine.R", "data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds", "www/styles.css"
+          )
+          if (file.exists("_runtime/www/brand-logo.svg")) {
+            expected_names <- c(expected_names, "www/brand-logo.svg")
+          }
           stopifnot(
-            length(payload) == 4L,
+            length(payload) == length(expected_names),
             identical(
-              vapply(payload, function(x) x$name, character(1)),
-              c("app.R", "R/model_engine.R", "data/20C_modelo_A_artefacto_parametrico_publico_v1.0.rds", "www/styles.css")
+              sort(vapply(payload, function(x) x$name, character(1))),
+              sort(expected_names)
             )
           )
+
+      - name: Install the pinned browser test runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run the real calculator button check
+        shell: bash
+        env:
+          APP_URL: http://127.0.0.1:8787/
+          EVIDENCE_PATH: browser-smoke-evidence.json
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8787 --directory site > browser-site.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8787/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node tests/browser-smoke-test.mjs
+
+      - name: Preserve functional-browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-browser-evidence
+          path: |
+            browser-smoke-evidence.json
+            browser-smoke-passed.png
+            browser-smoke-failed.png
+            browser-site.log
+          if-no-files-found: ignore
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

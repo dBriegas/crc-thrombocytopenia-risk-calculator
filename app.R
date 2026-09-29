@@ -1,6 +1,6 @@
 ###############################################################################
 # app.R
-# Model A Public Shinylive Clinical Calculator v1.4
+# Model A Public Shinylive Clinical Calculator v1.5
 ###############################################################################
 
 options(stringsAsFactors = FALSE)
@@ -224,6 +224,41 @@ continuous_support <- function(age, platelets, haemoglobin) {
   )
 }
 
+risk_reference <- function(probability) {
+
+  stopifnot(
+    length(probability) == 1L,
+    is.finite(probability),
+    probability >= 0,
+    probability <= 1
+  )
+
+  if (probability < 0.20) {
+    return(list(
+      level = "lower",
+      css_class = "risk-lower",
+      label = "Below the cohort reference band",
+      band = "Below 20%"
+    ))
+  }
+
+  if (probability <= 0.30) {
+    return(list(
+      level = "reference",
+      css_class = "risk-reference",
+      label = "Within the cohort reference band",
+      band = "20% to 30%"
+    ))
+  }
+
+  list(
+    level = "higher",
+    css_class = "risk-higher",
+    label = "Above the cohort reference band",
+    band = "Above 30%"
+  )
+}
+
 app_theme <- bslib::bs_theme(
   version = 5,
   bg = "#FFFEF6",
@@ -243,6 +278,18 @@ app_theme <- bslib::bs_theme(
   )
 )
 
+# Optional presentation-only asset. A future institutional logo can be added as
+# www/brand-logo.svg without changing the prediction engine or model artefact.
+brand_logo <- if (file.exists(file.path("www", "brand-logo.svg"))) {
+  shiny::tags$img(
+    class = "brand-logo",
+    src = "brand-logo.svg",
+    alt = "Institutional logo"
+  )
+} else {
+  NULL
+}
+
 ui <- shiny::fluidPage(
   theme = app_theme,
   shiny::tags$head(
@@ -254,6 +301,7 @@ ui <- shiny::fluidPage(
     class = "app-shell",
     shiny::div(
       class = "hero",
+      brand_logo,
       shiny::div(class = "hero-kicker", "Colorectal cancer · Public Model A"),
       shiny::h1("Chemotherapy-induced thrombocytopenia risk"),
       shiny::p(
@@ -321,7 +369,8 @@ ui <- shiny::fluidPage(
           shiny::actionButton(
             inputId = "calculate",
             label = "Calculate risk",
-            class = "btn-primary"
+            class = "btn-primary",
+            `data-testid` = "calculate-risk"
           )
         ),
         shiny::div(
@@ -365,11 +414,13 @@ ui <- shiny::fluidPage(
 
 server <- function(input, output, session) {
 
-  shiny::observeEvent(
-    input$regimen,
-    {
-      horizon <- maximum_cycle(input$regimen)
-      current_cycle <- suppressWarnings(as.numeric(input$cycle))
+  # Direct observers/reactives are used instead of observeEvent/eventReactive.
+  # This avoids the bindEvent route, which is not reliable in Shinylive/webR.
+  shiny::observe({
+      regimen <- input$regimen
+      shiny::req(!is.null(regimen), regimen %in% model_regimens)
+      horizon <- maximum_cycle(regimen)
+      current_cycle <- suppressWarnings(as.numeric(shiny::isolate(input$cycle)))
       if (!is.finite(current_cycle)) {
         current_cycle <- 1
       }
@@ -379,13 +430,15 @@ server <- function(input, output, session) {
         max = horizon,
         value = min(max(1, floor(current_cycle)), horizon)
       )
-    },
-    ignoreInit = FALSE
-  )
+  })
 
-  submitted <- shiny::eventReactive(
-    input$calculate,
-    {
+  submitted <- shiny::reactive({
+      click_count <- input$calculate
+      if (is.null(click_count) || click_count < 1L) {
+        return(NULL)
+      }
+
+      shiny::isolate({
       regimen <- as.character(input$regimen)
       cycle <- suppressWarnings(as.numeric(input$cycle))
       age <- suppressWarnings(as.numeric(input$age))
@@ -428,16 +481,27 @@ server <- function(input, output, session) {
         platelets = platelets,
         haemoglobin = haemoglobin,
         prediction = prediction[1, ],
+        risk_reference = risk_reference(prediction$p_final[[1]]),
         cycle_support = cycle_support(regimen, cycle),
         continuous_support = continuous_support(age, platelets, haemoglobin)
       )
-    },
-    ignoreInit = FALSE
-  )
+      })
+  })
 
   output$result_ui <- shiny::renderUI({
 
     result <- submitted()
+
+    if (is.null(result)) {
+      return(shiny::div(
+        class = "panel-card result-placeholder",
+        `data-testid` = "result-placeholder",
+        shiny::div(class = "panel-title", "Ready to calculate"),
+        shiny::p(
+          "Enter the patient and treatment values, then select Calculate risk."
+        )
+      ))
+    }
 
     if (!isTRUE(result$ok)) {
       return(shiny::div(
@@ -464,11 +528,25 @@ server <- function(input, output, session) {
         shiny::column(
           width = 5,
           shiny::div(
-            class = "risk-card",
+            class = paste("risk-card", result$risk_reference$css_class),
+            `data-testid` = "risk-card",
             shiny::div(class = "risk-label", "Predicted probability"),
             shiny::div(
               class = "risk-value",
+              `data-testid` = "risk-value",
               sprintf("%.1f%%", 100 * result$prediction$p_final)
+            ),
+            shiny::div(
+              class = "risk-context",
+              `data-testid` = "risk-context",
+              shiny::div(
+                class = "risk-context-label",
+                result$risk_reference$label
+              ),
+              shiny::div(
+                class = "risk-context-band",
+                result$risk_reference$band
+              )
             ),
             shiny::div(
               class = "risk-interval",
@@ -481,6 +559,14 @@ server <- function(input, output, session) {
             shiny::div(
               class = "risk-caption",
               paste0(regimen_labels[[result$regimen]], " · cycle ", result$cycle)
+            ),
+            shiny::div(
+              class = "risk-reference-note",
+              paste0(
+                "Descriptive context relative to the development cohort ",
+                "incidence (25.2%); these bands are not validated clinical ",
+                "or treatment thresholds."
+              )
             )
           )
         ),
@@ -509,7 +595,7 @@ server <- function(input, output, session) {
   output$domain_ui <- shiny::renderUI({
 
     result <- submitted()
-    if (!isTRUE(result$ok)) {
+    if (is.null(result) || !isTRUE(result$ok)) {
       return(NULL)
     }
 
@@ -554,7 +640,10 @@ server <- function(input, output, session) {
 
     result <- submitted()
     shiny::validate(
-      shiny::need(isTRUE(result$ok), "Enter a supported case to display the trajectory.")
+      shiny::need(
+        !is.null(result) && isTRUE(result$ok),
+        "Calculate a supported case to display the trajectory."
+      )
     )
 
     cycles <- seq_len(maximum_cycle(result$regimen))
@@ -644,14 +733,14 @@ server <- function(input, output, session) {
   })
 }
 
-message(
+cat(
   paste0(
     "Model A public Shiny calculator ready.\n",
     "Public artefact SHA-256: ", attr(model_artefact, "verified_sha256"), "\n",
     "Synthetic self-test maximum absolute difference: ",
     format(model_self_test$maximum_absolute_difference, scientific = TRUE), "\n",
     "Patient-level data included: NO\n",
-    "Submitted-value persistence: NO"
+    "Submitted-value persistence: NO\n"
   )
 )
 
