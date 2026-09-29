@@ -44,7 +44,14 @@ try {
   const frame = await findAppFrame(page);
 
   for (const item of cases) {
-    await frame.locator('#regimen').selectOption(item.regimen);
+    const regimenSelect = frame.locator('#regimen');
+    await regimenSelect.waitFor({ state: 'attached' });
+    await regimenSelect.evaluate((element, value) => {
+      if (!element.selectize) {
+        throw new Error('The Shiny regimen Selectize control is not initialised.');
+      }
+      element.selectize.setValue(value);
+    }, item.regimen);
     await sleep(300);
     await frame.locator('#cycle').fill(String(item.cycle));
     await frame.locator('#age').fill(String(item.age));
